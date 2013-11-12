@@ -1,0 +1,30 @@
+#### `.gitignore`
+
+# SVN directories
+.svn
+
+# osx noise
+.DS_Store
+*.pbxuser
+profile
+
+Thumbs.db
+
+#Flex Builder & FlashDevelop noise
+#.actionScriptProperties
+#.flexProperties
+#.project
+#.settings
+
+flash/bin/*
+flash/bin-debug/*
+flash/report/*
+flash/bin-test/*
+flash/html-template/*
+.buildpath
+.flexLibProperties
+
+#Java Noise
+*.class
+
+refe/*
