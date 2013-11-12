@@ -24,6 +24,11 @@ flash/html-template/*
 .buildpath
 .flexLibProperties
 
+demo/bin/*
+demo/bin-debug/*
+demo/report/*
+demo/bin-test/*
+
 #Java Noise
 *.class
 
