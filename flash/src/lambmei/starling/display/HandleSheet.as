@@ -1,10 +1,13 @@
 package lambmei.starling.display
 {
+	import flash.display.MovieClip;
 	import flash.geom.Point;
 	
 	import starling.display.Button;
 	import starling.display.DisplayObject;
+	import starling.display.DisplayObjectContainer;
 	import starling.display.Sprite;
+	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
@@ -15,14 +18,52 @@ package lambmei.starling.display
 		private var _selected:Boolean
 		private var _contents:DisplayObject
 		
-		private var _ctrlButton:Button
+		private var _ctrlButton:DisplayObject
 		private var _selectedGroup:Sprite
 		
+		private var _touchBringToFront:Boolean
+		public function get touchBringToFront():Boolean
+		{
+			return _touchBringToFront;
+		}
+
+		public function set touchBringToFront(value:Boolean):void
+		{
+			_touchBringToFront = value;
+		}
+
+		public function get selected():Boolean
+		{
+			return _selected;
+		}
 		
-		public static const CtrlButtonAlign_CENTER:String = "center"	
-		public static const CtrlButtonAlign_LT:String = "LT"
+		public function set selected(value:Boolean):void
+		{
+			if(value!=_selected){
+				_selected = value;
+				
+			}
+			
+		}
+		private static const CTRL_BUTTON_NAME:String = "ctrlBtn"
+		
+		public static const ALIGN_CENTER:String = "center"
+		public static const ALIGN_LT:String = "LT"
 		
 		private var _useCtrlButton:Boolean
+		
+		
+		public function get useCtrlButton():Boolean
+		{
+			return _useCtrlButton;
+		}
+		
+//		public function set useCtrlButton(value:Boolean):void
+//		{
+//			_useCtrlButton = value;
+//		}
+		
+		
 		
 		
 		public function HandleSheet(contents:DisplayObject=null)
@@ -30,6 +71,7 @@ package lambmei.starling.display
 			addEventListener(TouchEvent.TOUCH, onTouch);
 			useHandCursor = true;
 			
+			_touchBringToFront = true
 			
 			if (contents)
 			{
@@ -50,23 +92,32 @@ package lambmei.starling.display
 			this.addChild(this._selectedGroup);
 		}
 		
-		public function get useCtrlButton():Boolean
-		{
-			return _useCtrlButton;
-		}
 		
-		public function set useCtrlButton(value:Boolean):void
-		{
-			_useCtrlButton = value;
-		}
 		
-		public function setCtrlButtonInitTexture(upTexture:Texture , downTexture:Texture):void
+
+		
+		public function setCtrlButtonInitByTexture(upTexture:Texture , downTexture:Texture = null ):void
 		{
-			useCtrlButton = true
+			_useCtrlButton = true
 			
-			if (_contents && upTexture!=null)
+			if ( upTexture !=null)
 			{
-				_ctrlButton = new Button(upTexture,"ctrlBtn",downTexture);
+				_ctrlButton = new Button(upTexture,CTRL_BUTTON_NAME,downTexture);
+				
+				setCtrlButtonInitByObject(_ctrlButton )
+			}else{
+				throw new ArgumentError("Texture is Null!")
+			}
+		}
+		/** 設定控制按鈕 by 物件 可以是 image sprite button **/
+		public function setCtrlButtonInitByObject( obj:DisplayObject ):void
+		{
+			_useCtrlButton = true
+			
+			if (_contents)
+			{
+				_ctrlButton = obj
+				
 				
 				var _w:Number = _contents.width
 				var _h:Number = _contents.height
@@ -81,149 +132,40 @@ package lambmei.starling.display
 				_ctrlButton.y -= int(_ctrlButton.height/2)
 				
 				_selectedGroup.addChild(_ctrlButton)
-			}			
+			}
 		}
 		
-		public function get selected():Boolean
-		{
-			return _selected;
-		}
 		
-		public function set selected(value:Boolean):void
+		/** 單隻手指使用控制按鈕 放大縮小旋轉 **/
+		private function resizeAndRotationByCtrlButton(touches:Vector.<Touch>):void
 		{
-			if(value!=_selected){
-				_selected = value;
-				
-			}
 			
-		}
-		private function onTouch(event:TouchEvent):void
-		{
-			var touches:Vector.<Touch> = event.getTouches(this, TouchPhase.MOVED);
-			
-			
-			//一隻手指
-			if (touches.length == 1)
-			{
-				
-				//使用控制按鈕 點到ＢＵＴＴＯＮ
-				if(event.target == _ctrlButton){
-					
-					
-					var touchA:Touch = touches[0];
-					
-					//var topStage:Point = this.localToGlobal(new Point(0, 0));
-					var touchB:Touch = touchA.clone();
-					
-					//變成固定點 但應該不能用固
-					/*
-					var b:Button= new Button()
-					b.touchable=false
-					b.width = b.height = 10
-					this.addChild(b)	
-					
-					b.x = touchA.globalX
-					b.y = touchA.globalY
-					*/	
-					var n = touchA.getLocation(this);
-					
-					touchB.globalX = n.x * 1
-					touchB.globalY = n.y * -1
-					
-					//touchB.globalX = 
-					//					trace(this.x,this.y)
-					//					trace(touchA)
-					//											trace(touchA.globalX , touchA.globalY)
-					//					trace("-----------")					
-					
-					//var touchB:Touch = new Touch(1);
-					
-					var currentPosA:Point  = touchA.getLocation(this);
-					var previousPosA:Point = touchA.getPreviousLocation(this);
-					var currentPosB:Point  = currentPosA.clone();
-					currentPosB.x *=-1;
-					currentPosB.y *=-1;
-					
-					//var previousPosB:Point = touchB.getPreviousLocation(parent);
-					var previousPosB:Point  = previousPosA.clone();
-					previousPosB.x *=-1;
-					previousPosB.y *=-1;
-					
-					var currentVector:Point  = currentPosA.subtract(currentPosB);
-					var previousVector:Point = previousPosA.subtract(previousPosB);
-					
-					var currentAngle:Number  = Math.atan2(currentVector.y, currentVector.x);
-					var previousAngle:Number = Math.atan2(previousVector.y, previousVector.x);
-					
-					var deltaAngle:Number = currentAngle - previousAngle;
-					
-					// update pivot point based on previous center
-					var previousLocalA:Point  = touchA.getPreviousLocation(this);
-					var previousLocalB:Point  = touchB.getPreviousLocation(this);
-					//pivotX = (previousLocalA.x + previousLocalB.x) * 0.5;
-					//pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;
-					
-					
-					// update location based on the current center
-					//x = (currentPosA.x + currentPosB.x) * 0.5;
-					//y = (currentPosA.y + currentPosB.y) * 0.5;
-					
-					// rotate
-					rotation += deltaAngle;
-					
-					// scale
-					var sizeDiff:Number = currentVector.length / previousVector.length;
-					scaleX *= sizeDiff;
-					scaleY *= sizeDiff;
-					_ctrlButton.scaleX /= sizeDiff
-					_ctrlButton.scaleY /= sizeDiff
-					//					
-					
-					
-				}else{
-					//一隻手指平移
-					var delta:Point = touches[0].getMovement(parent);
-					
-					x += delta.x;
-					y += delta.y;
-				}
-				
-				
-			}
-			else if (touches.length == 2)
-			{
-				
-				// two fingers touching -> rotate and scale
 				var touchA:Touch = touches[0];
-				var touchB:Touch = touches[1];
-				trace("touchA" , touchA)
-				trace("touchB" , touchB)
+				var touchB:Touch = touchA.clone();		//模擬B點		
+				var n = touchA.getLocation(this);
+				//鏡射A點坐標
+				touchB.globalX = n.x * 1
+				touchB.globalY = n.y * -1
+							
+				var currentPosA:Point  = touchA.getLocation(this);
+				var previousPosA:Point = touchA.getPreviousLocation(this);
 				
-				var currentPosA:Point  = touchA.getLocation(parent);
-				var previousPosA:Point = touchA.getPreviousLocation(parent);
-				var currentPosB:Point  = touchB.getLocation(parent);
-				var previousPosB:Point = touchB.getPreviousLocation(parent);
-				trace(currentPosA , currentPosB)
-				
+				//鏡射A點
+				var currentPosB:Point  = currentPosA.clone();
+				currentPosB.x *=-1;
+				currentPosB.y *=-1;				
+				//鏡射A點
+				var previousPosB:Point  = previousPosA.clone();
+				previousPosB.x *=-1;
+				previousPosB.y *=-1;
 				
 				var currentVector:Point  = currentPosA.subtract(currentPosB);
 				var previousVector:Point = previousPosA.subtract(previousPosB);
 				
 				var currentAngle:Number  = Math.atan2(currentVector.y, currentVector.x);
 				var previousAngle:Number = Math.atan2(previousVector.y, previousVector.x);
+				
 				var deltaAngle:Number = currentAngle - previousAngle;
-				
-				// update pivot point based on previous center
-				var previousLocalA:Point  = touchA.getPreviousLocation(this);
-				var previousLocalB:Point  = touchB.getPreviousLocation(this);
-				trace(previousLocalA , previousLocalB)
-				
-				pivotX = (previousLocalA.x + previousLocalB.x) * 0.5;
-				pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;
-				
-				// update location based on the current center
-				x = (currentPosA.x + currentPosB.x) * 0.5;
-				y = (currentPosA.y + currentPosB.y) * 0.5;
 				
 				// rotate
 				rotation += deltaAngle;
@@ -232,10 +174,115 @@ package lambmei.starling.display
 				var sizeDiff:Number = currentVector.length / previousVector.length;
 				scaleX *= sizeDiff;
 				scaleY *= sizeDiff;
-				trace("----")
+				
+				//_ctrlButton 保持原比例
+				if(_ctrlButton){
+					_ctrlButton.scaleX /= sizeDiff
+					_ctrlButton.scaleY /= sizeDiff
+				}
+				
+				
+			
+		}
+		
+		/** 使用兩隻手指 使用放大縮小旋轉 保留官方功能 **/
+		private function resizeAndRotationByTwoFingers(touches:Vector.<Touch>):void
+		{
+			//保留官方原本兩隻手指操作的功能
+			// two fingers touching -> rotate and scale
+			var touchA:Touch = touches[0];
+			var touchB:Touch = touches[1];
+			
+			var currentPosA:Point  = touchA.getLocation(parent);
+			var previousPosA:Point = touchA.getPreviousLocation(parent);
+			var currentPosB:Point  = touchB.getLocation(parent);
+			var previousPosB:Point = touchB.getPreviousLocation(parent);
+			
+			var currentVector:Point  = currentPosA.subtract(currentPosB);
+			var previousVector:Point = previousPosA.subtract(previousPosB);
+			
+			var currentAngle:Number  = Math.atan2(currentVector.y, currentVector.x);
+			var previousAngle:Number = Math.atan2(previousVector.y, previousVector.x);
+			var deltaAngle:Number = currentAngle - previousAngle;
+			
+			// update pivot point based on previous center
+			var previousLocalA:Point  = touchA.getPreviousLocation(this);
+			var previousLocalB:Point  = touchB.getPreviousLocation(this);
+			trace(previousLocalA , previousLocalB)
+			
+			pivotX = (previousLocalA.x + previousLocalB.x) * 0.5;
+			pivotY = (previousLocalA.y + previousLocalB.y) * 0.5;
+			
+			// update location based on the current center
+			x = (currentPosA.x + currentPosB.x) * 0.5;
+			y = (currentPosA.y + currentPosB.y) * 0.5;
+			
+			// rotate
+			rotation += deltaAngle;
+			
+			// scale
+			var sizeDiff:Number = currentVector.length / previousVector.length;
+			scaleX *= sizeDiff;
+			scaleY *= sizeDiff;
+		}
+		
+		/**檢查是否touch 控制按鈕**/
+		private function isTouchCtrlButton(target:*):Boolean
+		{			
+			
+			var _do		:DisplayObject
+			var _doc	:DisplayObjectContainer
+
+			if(_ctrlButton is  DisplayObjectContainer){
+				_doc = _ctrlButton as DisplayObjectContainer
+				return _doc.contains(target)
+			} 
+			else if(_ctrlButton is DisplayObject)
+			{
+				_do = _ctrlButton as DisplayObjectContainer
+				return _do == target
+			} 
+			return false			
+		}
+
+		private function onTouch(event:TouchEvent):void
+		{
+			var touches:Vector.<Touch> = event.getTouches(this, TouchPhase.MOVED);
+			var touch:Touch		
+			
+			touch = event.getTouch(this, TouchPhase.BEGAN);			
+			onTouchBegan(touch)
+			
+			//一隻手指
+			if (touches.length == 1)
+			{
+								
+				//檢查是否是Ctrl
+				if(isTouchCtrlButton(event.target) )
+				{
+					
+					resizeAndRotationByCtrlButton(touches)
+					
+					
+				}else{
+					//一隻手指平移
+					var delta:Point = touches[0].getMovement(parent);
+					
+					x += delta.x;
+					y += delta.y;
+				}				
+				
+			}
+			else if (touches.length == 2)
+			{
+				resizeAndRotationByTwoFingers(touches)
 			}
 			
-			var touch:Touch = event.getTouch(this, TouchPhase.ENDED);
+			
+			touch  = event.getTouch(this, TouchPhase.ENDED);
+			onTouchEnd(touch)
+			
+			
 			
 			//if (touch && touch.tapCount == 2)
 			//				parent.addChild(this); // bring self to front
@@ -245,6 +292,17 @@ package lambmei.starling.display
 			//			 alpha = touch ? 0.8 : 1.0;
 			
 		}
+		private function onTouchBegan(touch:Touch)
+		{
+			
+		}
+		
+		
+		/**當touch結束**/
+		private function onTouchEnd(touch:Touch){
+//			_touchBringToFront
+		}
+		
 		
 		
 		public override function dispose():void
