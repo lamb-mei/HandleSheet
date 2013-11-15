@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with TexturePacker http://www.codeandweb.com/texturepacker-->
+<!-- $TexturePacker:SmartUpdate:f3fcdc3daf104c39d0051330937e8e58:40206f2bbb74791527e103510adc1e51:cde709370900f12288f3449eded86f07$ -->
+<TextureAtlas imagePath="atlas.png">
+    <SubTexture name="CtrlButton/0000" x="313" y="3" width="46" height="46"/>
+    <SubTexture name="CtrlButton/0001" x="263" y="3" width="46" height="46"/>
+    <SubTexture name="MuttonHotPot" x="3" y="3" width="256" height="256"/>
+    <SubTexture name="facebook" x="375" y="3" width="120" height="120"/>
+    <SubTexture name="google" x="251" y="387" width="120" height="120"/>
+    <SubTexture name="lamb-mei" x="263" y="127" width="112" height="120"/>
+    <SubTexture name="normal-page-symbol" x="263" y="69" width="12" height="12"/>
+    <SubTexture name="picasa" x="3" y="263" width="120" height="121"/>
+    <SubTexture name="selected-page-symbol" x="263" y="53" width="12" height="12"/>
+    <SubTexture name="twitter" x="251" y="263" width="120" height="120"/>
+    <SubTexture name="wordpress" x="127" y="387" width="120" height="120"/>
+    <SubTexture name="yahoo" x="127" y="263" width="120" height="120"/>
+    <SubTexture name="youtube" x="3" y="388" width="120" height="120"/>
+</TextureAtlas>
