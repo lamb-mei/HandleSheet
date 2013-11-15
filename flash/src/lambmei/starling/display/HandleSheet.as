@@ -16,6 +16,8 @@ package lambmei.starling.display
 	import starling.textures.Texture;
 	import starling.utils.Line;
 	
+	[Event(name="handleSheetSelected"		,type="starling.events.Event")]
+	
 	public class HandleSheet extends Sprite
 	{
 		
@@ -42,17 +44,12 @@ package lambmei.starling.display
 			return _useCtrlButton;
 		}
 		
-//		public function set useCtrlButton(value:Boolean):void
-//		{
-//			_useCtrlButton = value;
-//		}
-		
 		//Const Vars
 		protected static const CTRL_BUTTON_NAME:String = "HandlectrlBtn"
 		public static const ALIGN_CENTER:String = "center"
 		public static const ALIGN_LT:String = "LT"
 		
-		
+		public static const EVENT_SELECTED:String = "handleSheetSelected"
 		
 		//UI
 		protected var _contents:DisplayObject		
@@ -93,20 +90,56 @@ package lambmei.starling.display
 			this.addChild(this._selectedGroup);
 			
 			_shape = new Shape()	
-			updateLine()
+			
 			_selectedGroup.addChild(_shape)				
 			_selectedGroup.visible = _selected
 			
 		}
 		
 		/**重新計算**/
-		protected function render(scale=1):void
+		protected function render(sizeDiff:Number , deltaAngle:Number):void
 		{
-			updateLine(scale)
+			rotation += deltaAngle;
+			
+			scaleX *= sizeDiff;
+			scaleY *= sizeDiff;
+			
+			//_ctrlButton 保持原比例
+			if(_ctrlButton){
+				_ctrlButton.scaleX /= sizeDiff
+				_ctrlButton.scaleY /= sizeDiff
+				
+				//size 變更後需要重新定位
+				updateCtrlButtonPosition()
+			}
+			
+			
+			
+			updateLine(_ctrlButton.scaleX)
+		}
+		
+		/**計算CtrlButton 放置位置**/
+		protected function updateCtrlButtonPosition():void
+		{
+			if(_contents && _ctrlButton){
+				
+				var _w:Number = _contents.width
+				var _h:Number = _contents.height
+				var _halfW:Number = _w/2
+				var _halfH:Number= _h/2
+				
+				//放置右上角
+				_ctrlButton.x = int(_halfW)
+				_ctrlButton.y = - int(_halfH)
+				//置中對齊
+				_ctrlButton.x -= int(_ctrlButton.width/2)
+				_ctrlButton.y -= int(_ctrlButton.height/2)
+				
+			}
 		}
 		
 		/**更新框線**/
-		protected function updateLine(scale=1):void
+		protected function updateLine(sizeRate:Number):void
 		{
 			if(_contents && _shape){
 				_shape.graphics.lineStyle(10,0xFFffFF);
@@ -119,7 +152,7 @@ package lambmei.starling.display
 					var _halfW:Number = _w/2
 					var _halfH:Number= _h/2
 					
-					_shape.graphics.lineStyle(2 * scale,0xFFFFFF);
+					_shape.graphics.lineStyle(2 * sizeRate ,0xFFFFFF);
 					//_shape.graphics.drawRoundRect( -_halfW, -_halfH, _w, _h, 10 );
 					_shape.graphics.drawRect(-_halfW, -_halfH, _w, _h);
 					
@@ -128,8 +161,6 @@ package lambmei.starling.display
 			}
 		}
 		
-		
-
 		
 		public function setCtrlButtonInitByTexture(upTexture:Texture , downTexture:Texture = null ):void
 		{
@@ -152,21 +183,13 @@ package lambmei.starling.display
 			
 			if (_contents)
 			{
-				_ctrlButton = obj
-				
-				
-				var _w:Number = _contents.width
-				var _h:Number = _contents.height
-				var _halfW:Number = _w/2
-				var _halfH:Number= _h/2
-				//放置右上角
-				_ctrlButton.x = int(_halfW)
-				_ctrlButton.y = - int(_halfH)
-				
-				//置中對齊
-				_ctrlButton.x -= int(_ctrlButton.width/2)
-				_ctrlButton.y -= int(_ctrlButton.height/2)
-				
+				//避免讓外部物件Size != 1 影響計算
+				var _container:Sprite = new Sprite()
+				_container.addChild(obj)
+				_ctrlButton = _container
+				//定位
+				updateCtrlButtonPosition()
+								
 				_selectedGroup.addChild(_ctrlButton)
 			}
 		}
@@ -219,8 +242,11 @@ package lambmei.starling.display
 			if(touch){
 				if(_touchBringToFront){				
 					parent.addChild(this);				
-				}			
+				}
 				selected = true
+					
+				render(1, 0)
+				dispatchEventWith(EVENT_SELECTED,false)
 			}
 			
 		}
@@ -284,20 +310,14 @@ package lambmei.starling.display
 			var deltaAngle:Number = currentAngle - previousAngle;
 			
 			// rotate
-			rotation += deltaAngle;
+			//rotation += deltaAngle;
 			
 			// scale
 			var sizeDiff:Number = currentVector.length / previousVector.length;
-			scaleX *= sizeDiff;
-			scaleY *= sizeDiff;
+//			scaleX *= sizeDiff;
+//			scaleY *= sizeDiff;
 			
-			//_ctrlButton 保持原比例
-			if(_ctrlButton){
-				_ctrlButton.scaleX /= sizeDiff
-				_ctrlButton.scaleY /= sizeDiff
-			}
-			
-			render(_ctrlButton.scaleX)
+			render(sizeDiff , deltaAngle)
 			
 		}
 		
@@ -334,14 +354,14 @@ package lambmei.starling.display
 			y = (currentPosA.y + currentPosB.y) * 0.5;
 			
 			// rotate
-			rotation += deltaAngle;
+//			rotation += deltaAngle;
 			
 			// scale
 			var sizeDiff:Number = currentVector.length / previousVector.length;
-			scaleX *= sizeDiff;
-			scaleY *= sizeDiff;
+//			scaleX *= sizeDiff;
+//			scaleY *= sizeDiff;
 			
-			render(_ctrlButton.scaleX)
+			render(sizeDiff , deltaAngle)
 		}
 		
 		
