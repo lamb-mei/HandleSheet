@@ -20,9 +20,30 @@ package lambmei.starling.display
 	
 	public class HandleSheet extends Sprite
 	{
+		//var
+		
+		/**外框線寬度**/
+		protected var _thickness:Number = 2
+		public function get thickness():Number { return _thickness; }
+		public function set thickness(value:Number):void{_thickness = value;}
+		
+		/**外框線顏色**/
+		protected var _lineColor:uint = 0xffffff
+		public function get lineColor():uint { return _lineColor;}
+		public function set lineColor(value:uint):void { _lineColor = value;}
+		
+		/** 最小SIZE **/		
+		protected var _minSize:Number	//預設 NaN
+		public function get minSize():Number{ return _minSize;}		
+		public function set minSize(value:Number):void{_minSize = value;}
+		
+		/** 最大可縮放的SIZE **/
+		protected var _maxSize:Number	//預設 NaN
+		public function get maxSize():Number{return _maxSize;}		
+		public function set maxSize(value:Number):void { _maxSize = value; }
 		
 		/** 點擊 將物件移動到前方 **/
-		protected var _touchBringToFront:Boolean		
+		protected var _touchBringToFront:Boolean
 		public function get touchBringToFront():Boolean { return _touchBringToFront;}
 		public function set touchBringToFront(value:Boolean):void{ _touchBringToFront = value; }
 		
@@ -101,21 +122,37 @@ package lambmei.starling.display
 		{
 			rotation += deltaAngle;
 			
+			var _sizeRate:Number = scaleX * sizeDiff;
+			
+			var isMinSize:Boolean = _minSize > 0 && _minSize > _sizeRate
+			var isMaxSize:Boolean = _maxSize > 0 && _sizeRate > _maxSize
+			//在範圍內才縮放
+			if(!(isMinSize || isMaxSize)){
+				
+				if(sizeDiff != Infinity){
+					updateSize(sizeDiff)
+				}
+				
+			}
+
+			
+			
+			updateLine(_ctrlButton.scaleX)
+		}
+		
+		
+		protected function updateSize(sizeDiff:Number):void
+		{
 			scaleX *= sizeDiff;
 			scaleY *= sizeDiff;
 			
 			//_ctrlButton 保持原比例
 			if(_ctrlButton){
 				_ctrlButton.scaleX /= sizeDiff
-				_ctrlButton.scaleY /= sizeDiff
-				
+				_ctrlButton.scaleY /= sizeDiff				
 				//size 變更後需要重新定位
 				updateCtrlButtonPosition()
 			}
-			
-			
-			
-			updateLine(_ctrlButton.scaleX)
 		}
 		
 		/**計算CtrlButton 放置位置**/
@@ -142,9 +179,7 @@ package lambmei.starling.display
 		protected function updateLine(sizeRate:Number):void
 		{
 			if(_contents && _shape){
-				_shape.graphics.lineStyle(10,0xFFffFF);
 					_shape.graphics.clear();
-					
 					System.gc();
 					
 					var _w:Number = _contents.width
@@ -152,7 +187,7 @@ package lambmei.starling.display
 					var _halfW:Number = _w/2
 					var _halfH:Number= _h/2
 					
-					_shape.graphics.lineStyle(2 * sizeRate ,0xFFFFFF);
+					_shape.graphics.lineStyle(_thickness * sizeRate ,_lineColor);
 					//_shape.graphics.drawRoundRect( -_halfW, -_halfH, _w, _h, 10 );
 					_shape.graphics.drawRect(-_halfW, -_halfH, _w, _h);
 					
