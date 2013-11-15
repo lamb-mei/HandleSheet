@@ -2,16 +2,19 @@ package lambmei.starling.display
 {
 	import flash.display.MovieClip;
 	import flash.geom.Point;
+	import flash.system.System;
 	
 	import starling.display.Button;
 	import starling.display.DisplayObject;
 	import starling.display.DisplayObjectContainer;
+	import starling.display.Shape;
 	import starling.display.Sprite;
 	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
+	import starling.utils.Line;
 	
 	public class HandleSheet extends Sprite
 	{
@@ -55,6 +58,7 @@ package lambmei.starling.display
 		protected var _contents:DisplayObject		
 		protected var _ctrlButton:DisplayObject
 		protected var _selectedGroup:Sprite
+		protected var _shape:Shape
 		
 		
 		public function HandleSheet(contents:DisplayObject=null)
@@ -78,12 +82,51 @@ package lambmei.starling.display
 				
 			}			
 			//init SelectGroup
-			_selectedGroup = new Sprite()			
-			this.addChild(this._selectedGroup);
-			
-			_selectedGroup.visible = _selected
+			initSelectedGroup()
 		}
 		
+		/** 初始化選擇的群組**/
+		protected function initSelectedGroup():void
+		{
+			
+			_selectedGroup = new Sprite()		
+			this.addChild(this._selectedGroup);
+			
+			_shape = new Shape()	
+			updateLine()
+			_selectedGroup.addChild(_shape)				
+			_selectedGroup.visible = _selected
+			
+		}
+		
+		/**重新計算**/
+		protected function render(scale=1):void
+		{
+			updateLine(scale)
+		}
+		
+		/**更新框線**/
+		protected function updateLine(scale=1):void
+		{
+			if(_contents && _shape){
+				_shape.graphics.lineStyle(10,0xFFffFF);
+					_shape.graphics.clear();
+					
+					System.gc();
+					
+					var _w:Number = _contents.width
+					var _h:Number = _contents.height
+					var _halfW:Number = _w/2
+					var _halfH:Number= _h/2
+					
+					_shape.graphics.lineStyle(2 * scale,0xFFFFFF);
+					//_shape.graphics.drawRoundRect( -_halfW, -_halfH, _w, _h, 10 );
+					_shape.graphics.drawRect(-_halfW, -_halfH, _w, _h);
+					
+					//trace("scale",scale)
+					
+			}
+		}
 		
 		
 
@@ -94,7 +137,7 @@ package lambmei.starling.display
 			
 			if ( upTexture !=null)
 			{
-				_ctrlButton = new Button(upTexture,CTRL_BUTTON_NAME,downTexture);
+				_ctrlButton = new Button(upTexture,"",downTexture);
 				
 				setCtrlButtonInitByObject(_ctrlButton )
 			}else{
@@ -165,6 +208,8 @@ package lambmei.starling.display
 			touch  = event.getTouch(this, TouchPhase.ENDED);
 			onTouchEnd(touch)
 			
+			
+			
 		}
 		
 		/**當touch開始**/
@@ -213,7 +258,7 @@ package lambmei.starling.display
 			
 			var touchA:Touch = touches[0];
 			var touchB:Touch = touchA.clone();		//模擬B點		
-			var n = touchA.getLocation(this);
+			var n:Point = touchA.getLocation(this);
 			//鏡射A點坐標
 			touchB.globalX = n.x * 1
 			touchB.globalY = n.y * -1
@@ -252,7 +297,7 @@ package lambmei.starling.display
 				_ctrlButton.scaleY /= sizeDiff
 			}
 			
-			
+			render(_ctrlButton.scaleX)
 			
 		}
 		
@@ -295,6 +340,8 @@ package lambmei.starling.display
 			var sizeDiff:Number = currentVector.length / previousVector.length;
 			scaleX *= sizeDiff;
 			scaleY *= sizeDiff;
+			
+			render(_ctrlButton.scaleX)
 		}
 		
 		
@@ -308,5 +355,4 @@ package lambmei.starling.display
 		}
 	}
 }
-import lambmei.starling.display.HandleSheet;
 
