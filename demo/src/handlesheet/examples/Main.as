@@ -1,13 +1,13 @@
 package handlesheet.examples 
 {
-	import flash.geom.Point;
 	
 	import lambmei.starling.display.HandleSheet;
+	import lambmei.starling.display.HandleSheetConfig;
 	
+	import starling.display.DisplayObject;
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
-	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
@@ -46,69 +46,131 @@ package handlesheet.examples
 		protected function addedToStageHandler(event:Event):void
 		{
 			this.removeEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
-			
-			
-			
-			
-			
-			var texture:Texture = _textureAtlas.getTexture("facebook")
-			
-			var img:Image =new Image(texture)
-			
-			
-			var btnTexture:Texture = _textureAtlas.getTexture("normal-page-symbol");
-			
-			
-			//Item
-			var hs:HandleSheet = new HandleSheet(img)
-			hs.setCtrlButtonInitByTexture(btnTexture)
-			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
-			hs.x = 300
-			hs.y = 300
-			
-			addChild(hs)
-			
-			img = new Image(_textureAtlas.getTexture("selected-page-symbol"))
-			img.width = 20
-			img.height = 20
 				
+			var texture:Texture
+			var hs:HandleSheet
+			var _contents:DisplayObject
 			
-			hs = new HandleSheet(new Image(_textureAtlas.getTexture("MuttonHotPot")))
-			hs.setCtrlButtonInitByObject(img)
-			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
-			hs.maxSize = 2
-			hs.x = 100
+			/** HandeSheet 1 **/
+			_contents = new Image(_textureAtlas.getTexture("lamb-mei"))
+			hs = new HandleSheet(_contents)
+			//使用 Texture
+			hs.setCtrlButtonInitByTexture(_textureAtlas.getTexture("CtrlButton/0000"))
+			hs.addEventListener(HandleSheet.EVENT_SELECTED, onSelect);
+			hs.x = 120
 			hs.y = 150
-				
-			addChild(hs)
-				
-			hs = new HandleSheet(new Image(_textureAtlas.getTexture("lamb-mei")))
-			hs.setCtrlButtonInitByObject(new Image(_textureAtlas.getTexture("selected-page-symbol")))
-			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
-			hs.x = 100
-			hs.y = 250
-				
-			addChild(hs)	
-				
-				
-			hs = new HandleSheet(new Image(_textureAtlas.getTexture("yahoo")))
-			hs.setCtrlButtonInitByTexture(_textureAtlas.getTexture("CtrlButton/0000"),
-				_textureAtlas.getTexture("CtrlButton/0001"))
-			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
-			
-			hs.x = 300
-			hs.y = 450
-			
-			
 			addChild(hs)
 			
-			addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
+			
+			/** HandeSheet 2 **/
+			_contents = new Image(_textureAtlas.getTexture("facebook"))			
+			hs = new HandleSheet(_contents)
+			//使用  down Texture 
+			hs.setCtrlButtonInitByTexture(_textureAtlas.getTexture("CtrlButton/0000"), _textureAtlas.getTexture("CtrlButton/0001"))
+			//啟用  dispatchEventBubbles 可以只註冊再上層
+			hs.dispatchEventBubbles = true
+			// Line style
+			hs.thickness = 5				
+			hs.lineColor = 0xF7BD19				
+			hs.x = 320
+			hs.y = 150
+			addChild(hs)
+			
+			
+			/** HandeSheet 3 **/
+			_contents = new Image(_textureAtlas.getTexture("MuttonHotPot"))
+			_contents.width = _contents.height = 120
+			hs = new HandleSheet(_contents)						
+			hs.dispatchEventBubbles = true			
+			// Size Limit
+			hs.minSize = 0.5
+			hs.maxSize = 2.5			
+			//Do not Auto Bring to Front
+			hs.touchBringToFront = false				
+			hs.x = 520
+			hs.y = 150
+			addChild(hs)
+			
+			
+			/** HandeSheet 4 **/
+			_contents = new Image(_textureAtlas.getTexture("yahoo"))
+			hs = new HandleSheet(_contents)
+			hs.dispatchEventBubbles = true	
+			//Create Coustom CtrlButton						
+			function imgFactory():Image{
+				var img:Image = new Image(_textureAtlas.getTexture("selected-page-symbol"))
+				img.width = 20
+				img.height = 20
+				return img
+			}				
+			hs.setCtrlButtonInitByFactory(imgFactory)		
+				
+			hs.x = 120
+			hs.y = 300
+			addChild(hs)
+			
+				
+			
+			/* init Muti By Config */	
+			
+			//Conf 1
+			var conf1:HandleSheetConfig = new HandleSheetConfig()
+			conf1.setCtrlButtonInitByTexture(_textureAtlas.getTexture("CtrlButton/0000"), _textureAtlas.getTexture("CtrlButton/0001")) 
+			conf1.dispatchEventBubbles = true	
+			conf1.minSize = 0.5
+			conf1.lineColor = 0xFF0000
+				
+			//Conf 2	
+			var conf2:HandleSheetConfig = new HandleSheetConfig()
+			conf2.dispatchEventBubbles = true	
+			function imgFactory1():Image{
+				var img:Image = new Image(_textureAtlas.getTexture("selected-page-symbol"))
+				img.width = 30
+				img.height = 30
+				return img
+			}
+			conf2.maxSize = 2
+			conf2.setCtrlButtonInitByFactory(imgFactory)		
+				
+				
+			var i:int = 0
+			var textureGroup:Array = ["google","picasa" ,"twitter","wordpress","youtube","livejournal"]
+			for each(var textureName:String in textureGroup)
+			{
+				var row:int = i/3 >>0 
+				
+				_contents = new Image(_textureAtlas.getTexture(textureName))
+				
+				var useConf:HandleSheetConfig = row == 0 ? conf1 : conf2
+				hs = new HandleSheet(_contents , useConf)
+				
+					
+				hs.x = 120 + (200 * (i%3))
+				hs.y = 500 + (180 * row )
+				i++	
+				addChild(hs)
+			}
+			
+			//可以捕捉到 dispatchEventBubbles 為  true 物件發出的EVENT
+			addEventListener(HandleSheet.EVENT_SELECTED, onCatchDispatchEvent);
 		}
 		
-		protected function onTouch(event:Event):void
+		
+		
+		
+		protected function onCatchDispatchEvent(event:Event):void
+		{
+			if(event.target is HandleSheet){
+				if(lastSelect!=null && event.target != lastSelect){
+					lastSelect.selected = false
+				}
+				lastSelect = event.target as HandleSheet
+				event.stopImmediatePropagation()
+			}
+		}
+		protected function onSelect(event:Event):void
 		{
 //			trace(event.target)
-//			trace(event.target is HandleSheet)
 			if(event.target is HandleSheet){
 				
 				if(lastSelect!=null && event.target != lastSelect){
