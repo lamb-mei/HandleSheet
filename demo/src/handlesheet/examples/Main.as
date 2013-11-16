@@ -2,12 +2,12 @@ package handlesheet.examples
 {
 	import flash.geom.Point;
 	
-	
 	import lambmei.starling.display.HandleSheet;
 	
 	import starling.display.Image;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.TouchEvent;
 	import starling.textures.Texture;
 	import starling.textures.TextureAtlas;
 	
@@ -26,6 +26,9 @@ package handlesheet.examples
 		
 		
 		private var _textureAtlas:TextureAtlas
+		
+		
+		private var lastSelect:HandleSheet
 		
 		public function Main()
 		{
@@ -59,20 +62,21 @@ package handlesheet.examples
 			//Item
 			var hs:HandleSheet = new HandleSheet(img)
 			hs.setCtrlButtonInitByTexture(btnTexture)
-			
+			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
 			hs.x = 300
 			hs.y = 300
 			
 			addChild(hs)
 			
 			img = new Image(_textureAtlas.getTexture("selected-page-symbol"))
-			img.width = 30
-			img.height = 30
+			img.width = 20
+			img.height = 20
 				
 			
 			hs = new HandleSheet(new Image(_textureAtlas.getTexture("MuttonHotPot")))
 			hs.setCtrlButtonInitByObject(img)
-			
+			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
+			hs.maxSize = 2
 			hs.x = 100
 			hs.y = 150
 				
@@ -80,7 +84,7 @@ package handlesheet.examples
 				
 			hs = new HandleSheet(new Image(_textureAtlas.getTexture("lamb-mei")))
 			hs.setCtrlButtonInitByObject(new Image(_textureAtlas.getTexture("selected-page-symbol")))
-			
+			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
 			hs.x = 100
 			hs.y = 250
 				
@@ -90,16 +94,31 @@ package handlesheet.examples
 			hs = new HandleSheet(new Image(_textureAtlas.getTexture("yahoo")))
 			hs.setCtrlButtonInitByTexture(_textureAtlas.getTexture("CtrlButton/0000"),
 				_textureAtlas.getTexture("CtrlButton/0001"))
+			hs.addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
 			
-			hs.x = 200
-			hs.y = 350
+			hs.x = 300
+			hs.y = 450
 			
 			
 			addChild(hs)
 			
-			
+			addEventListener(HandleSheet.EVENT_SELECTED, onTouch);
 		}
 		
+		protected function onTouch(event:Event):void
+		{
+//			trace(event.target)
+//			trace(event.target is HandleSheet)
+			if(event.target is HandleSheet){
+				
+				if(lastSelect!=null && event.target != lastSelect){
+					lastSelect.selected = false
+				}
+				
+				
+				lastSelect = event.target as HandleSheet
+			}
+		}
 	}
 }
 
