@@ -79,7 +79,7 @@ package lambmei.starling.display
 		protected var _shape:Shape
 		
 		
-		public function HandleSheet(contents:DisplayObject=null)
+		public function HandleSheet(contents:DisplayObject,conf:HandleSheetConfig=null)
 		{
 			addEventListener(TouchEvent.TOUCH, onTouch);
 			useHandCursor = true;
@@ -101,6 +101,23 @@ package lambmei.starling.display
 			}			
 			//init SelectGroup
 			initSelectedGroup()
+			
+			if(conf!=null){
+				_thickness			 = conf.thickness
+				_lineColor			 = conf.lineColor
+				_minSize			 = conf.minSize
+				_maxSize			 = conf.maxSize
+				_touchBringToFront	 = conf.touchBringToFront
+				
+				switch(conf.ctrlButtonInitType){
+					case HandleSheetConfig.CTRLBUTTON_TYPE_BY_TEXTURE:
+						this.setCtrlButtonInitByTexture(conf.upTexture , conf.downTexture)
+						break
+					case HandleSheetConfig.CTRLBUTTON_TYPE_BY_OBJECT:
+						this.setCtrlButtonInitByObject(conf.obj)
+						break
+				}
+			}
 		}
 		
 		/** 初始化選擇的群組**/
@@ -196,7 +213,7 @@ package lambmei.starling.display
 			}
 		}
 		
-		
+		/** 設定控制按鈕 by Texture 至少需要UP 狀態 **/
 		public function setCtrlButtonInitByTexture(upTexture:Texture , downTexture:Texture = null ):void
 		{
 			_useCtrlButton = true
