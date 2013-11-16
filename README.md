@@ -1,6 +1,6 @@
 # Starling HandleSheet
 
-For ease use one finger touching to moving 、 rotating and scaling on Starling
+Use one finger touching to moving 、 rotating and scaling on Starling
 
 Baseed on Starling 實現單手簡單操作物件位移 、旋轉和縮放
 
