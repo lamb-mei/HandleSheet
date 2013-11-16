@@ -1,6 +1,5 @@
 package lambmei.starling.display
 {
-	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import flash.system.System;
 	
@@ -9,12 +8,10 @@ package lambmei.starling.display
 	import starling.display.DisplayObjectContainer;
 	import starling.display.Shape;
 	import starling.display.Sprite;
-	import starling.events.Event;
 	import starling.events.Touch;
 	import starling.events.TouchEvent;
 	import starling.events.TouchPhase;
 	import starling.textures.Texture;
-	import starling.utils.Line;
 	
 	[Event(name="handleSheetSelected"		,type="starling.events.Event")]
 	
@@ -47,6 +44,11 @@ package lambmei.starling.display
 		public function get touchBringToFront():Boolean { return _touchBringToFront;}
 		public function set touchBringToFront(value:Boolean):void{ _touchBringToFront = value; }
 		
+		/** 冒泡傳遞事件 預設為false 打開會使用較多的記憶體 **/
+		protected var _dispatchEventBubbles:Boolean
+		public function get dispatchEventBubbles():Boolean { return _dispatchEventBubbles;}
+		public function set dispatchEventBubbles(value:Boolean):void{ _dispatchEventBubbles = value; }
+		
 		/** 是否選擇 **/
 		protected var _selected:Boolean
 		public function get selected():Boolean { return _selected;}		
@@ -64,6 +66,12 @@ package lambmei.starling.display
 		{
 			return _useCtrlButton;
 		}
+		
+		
+		protected var _ctrlButtonInitType:String
+		public function get ctrlButtonInitType():String		{			return _ctrlButtonInitType;		}
+		
+			
 		
 		//Const Vars
 		protected static const CTRL_BUTTON_NAME:String = "HandlectrlBtn"
@@ -88,15 +96,19 @@ package lambmei.starling.display
 			
 			if (contents)
 			{
-				var _w:Number = contents.width
-				var _h:Number = contents.height
+				var _container:Sprite = new Sprite()
+				_container.addChild(contents)
+				
+				var _w:Number = _container.width
+				var _h:Number = _container.height
 				var _halfW:Number = _w/2
 				var _halfH:Number= _h/2
 				//將物件置中
-				contents.x = int(_halfW * -1);
-				contents.y = int(_halfH * -1);
-				addChild(contents);
-				_contents = contents
+				_container.x = int(_halfW * -1);
+				_container.y = int(_halfH * -1);
+				addChild(_container);
+				_contents = _container
+				
 				
 			}			
 			//init SelectGroup
@@ -108,6 +120,8 @@ package lambmei.starling.display
 				_minSize			 = conf.minSize
 				_maxSize			 = conf.maxSize
 				_touchBringToFront	 = conf.touchBringToFront
+				_dispatchEventBubbles	 = conf.dispatchEventBubbles
+				
 				
 				switch(conf.ctrlButtonInitType){
 					case HandleSheetConfig.CTRLBUTTON_TYPE_BY_TEXTURE:
@@ -115,6 +129,9 @@ package lambmei.starling.display
 						break
 					case HandleSheetConfig.CTRLBUTTON_TYPE_BY_OBJECT:
 						this.setCtrlButtonInitByObject(conf.obj)
+						break
+					case HandleSheetConfig.CTRLBUTTON_TYPE_BY_FACTORY:
+						this.setCtrlButtonInitByFactory(conf.factory)
 						break
 				}
 			}
@@ -151,10 +168,7 @@ package lambmei.starling.display
 				}
 				
 			}
-
-			
-			
-			updateLine(_ctrlButton.scaleX)
+			updateLine(scaleX)
 		}
 		
 		
@@ -204,7 +218,7 @@ package lambmei.starling.display
 					var _halfW:Number = _w/2
 					var _halfH:Number= _h/2
 					
-					_shape.graphics.lineStyle(_thickness * sizeRate ,_lineColor);
+					_shape.graphics.lineStyle(_thickness / sizeRate ,_lineColor);
 					//_shape.graphics.drawRoundRect( -_halfW, -_halfH, _w, _h, 10 );
 					_shape.graphics.drawRect(-_halfW, -_halfH, _w, _h);
 					
@@ -228,7 +242,30 @@ package lambmei.starling.display
 			}
 		}
 		
-		/** 設定控制按鈕 by 物件 可以是 image sprite button **/
+		/** 
+		 *	設定控制按鈕 by 物件 可以是 image sprite button
+		 *	讓 Obj 可以重覆使用 
+		 **/
+		public function setCtrlButtonInitByFactory( factory:Function ):void			
+		{
+			var obj:DisplayObject
+			if(factory !=null){
+				obj = factory()
+				if(obj is DisplayObject && obj !=null){
+					setCtrlButtonInitByObject( obj )
+					return
+				}else{
+					throw new ArgumentError("factory return not DisplayObject")
+				}
+			}else{
+				throw new ArgumentError("factory not Defined")
+			}
+		}
+		
+		/** 
+		 * 設定控制按鈕 by 物件 可以是 image sprite button 
+		 * 物件因DisplayObject限制不能跟其他 HandleSheet 共用
+		 * **/
 		public function setCtrlButtonInitByObject( obj:DisplayObject ):void
 		{
 			_useCtrlButton = true
@@ -243,6 +280,8 @@ package lambmei.starling.display
 				updateCtrlButtonPosition()
 								
 				_selectedGroup.addChild(_ctrlButton)
+			}else{
+				throw new ArgumentError("Obj is Null!")
 			}
 		}
 		
@@ -298,7 +337,7 @@ package lambmei.starling.display
 				selected = true
 					
 				render(1, 0)
-				dispatchEventWith(EVENT_SELECTED,false)
+				dispatchEventWith(EVENT_SELECTED , _dispatchEventBubbles)
 			}
 			
 		}
