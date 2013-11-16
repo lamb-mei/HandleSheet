@@ -15,6 +15,16 @@ package lambmei.starling.display
 	
 	[Event(name="handleSheetSelected"		,type="starling.events.Event")]
 	
+	/**
+	 * Handle the display of sheet in Starling
+	 *
+	 * @author lamb-mei 羊小咩
+	 * 
+	 * 為了解決單手控制物件移動放大縮小
+	 * 
+	 * Copyright (C) 2013, lamb-mei
+	 * http://blog.lamb-mei.com
+	 */
 	public class HandleSheet extends Sprite
 	{
 		//var
