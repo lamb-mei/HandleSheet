@@ -24,10 +24,17 @@ flash/html-template/*
 .buildpath
 .flexLibProperties
 
-demo/bin/*
-demo/bin-debug/*
-demo/report/*
-demo/bin-test/*
+examples/HandleSheet-Demo/bin/*
+examples/HandleSheet-Demo/bin-debug/*
+examples/HandleSheet-Demo/report/*
+examples/HandleSheet-Demo/bin-test/*
+
+examples/Mobile-demo/bin/*
+examples/Mobile-demo/bin-debug/*
+examples/Mobile-demo/report/*
+examples/Mobile-demo/bin-test/*
+
+
 
 #Java Noise
 *.class
