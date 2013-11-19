@@ -16,7 +16,7 @@ What feature in HandleSheet:
   - one finger touch control button to rotating and scaling
   - two finger touching to rotating and scaling
   - finger touch moving
-  - coustom control button display
+  - custom control button display
   - scale limit
   - auto bring to front
   - outline border thickness
@@ -26,7 +26,7 @@ What feature in HandleSheet:
 
 
 
-## Ues Libs (Depends) 
+## Depends
 
   - Starling (https://github.com/PrimaryFeather/Starling-Framework)
   - Starling-Extension-Graphics (https://github.com/StarlingGraphics/Starling-Extension-Graphics)
@@ -35,7 +35,7 @@ What feature in HandleSheet:
 
 ## Usage
 
-Base
+Basic
 
     var _contents:DisplayObject = new Image(_texture)
     var hs:HandleSheet = new HandleSheet(_contents)
@@ -64,7 +64,7 @@ Scale limit
     hs.maxSize = 2
 
 
-Coustom outline border
+Custom outline border
 
     var hs:HandleSheet = new HandleSheet(_contents)
     hs.thickness = 5
