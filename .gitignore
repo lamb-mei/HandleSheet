@@ -40,3 +40,5 @@ examples/Mobile-demo/bin-test/*
 *.class
 
 refe/*
+/examples/HandleSheet-Demo/bin-debug/Main.swf
+/examples/Mobile-demo/bin-debug/HandleSheetDemo.swf
