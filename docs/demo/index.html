@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+<title>HandleSheet</title>
+<script src="scripts/swfobject_fix.js"></script>
+
+<style>
+
+html,body{
+	margin:0px;
+	padding:0px;
+		width:100%;
+		height:100%;
+
+}
+
+
+
+#flashContent{	
+	display:none;
+	width:1000px;
+	height:700px;
+	
+	min-width:1000px;
+	min-height: 700px;
+	position: relative;
+}
+object:focus { outline:none; }
+
+</style>
+
+<script type="text/javascript">
+            
+            var swfVersionStr = "11.0.0";
+            var xiSwfUrlStr =  "./scripts/playerProductInstall.swf" //"scripts/expressInstall.swf";
+			var flash_dir = "static/"
+			var update	 = "2013-1119-1200"
+			var flashvars = {};
+			
+            var params = {};
+			params.base = "."
+            params.quality = "high";
+            
+            params.allowfullscreen = "true";
+			params.allowScriptAccess= "always"
+			//params.wmode= "transparent"
+			params.wmode= "Direct"
+			//params.wmode= "opaque"
+			//params.wmode= "window"
+			 
+            var attributes = {};
+            
+            
+            function embedSWF(){
+				
+				var vers =  swfobject.getFlashPlayerVersion()
+									
+				swfobject.embedSWF(
+	                flash_dir+"Main.swf"+"?v"+update,
+					"flashContent", 
+	                "1000", "700", 
+	                swfVersionStr, xiSwfUrlStr, 
+	                flashvars, params, attributes
+				);
+				 swfobject.createCSS("#flashContent", "display:block;position: relative");
+
+			
+            }
+           embedSWF()
+</script>
+
+</head>
+
+<body>
+<!--[if lte IE 6]>
+    <div style="background-color:#DDECFF;margin:5px 0 5px 0;padding:3px 10px 3px 10px;border-color:#F6F6F6; border-style:solid;border-width:2px;">
+    <p>
+    <font size="2">
+    	<strong>您好</strong>，您目前使用的是舊版的<del>IE 6.0網路瀏覽器</del>，建議使用更快、更好用的瀏覽器！ 如：
+    	<big><u>Google瀏覽器</u> <font color="red">(推薦!)</font></big>、Firefox、Opera、Safari</a>。
+    </font>
+    </p>
+    </div>
+<![endif]-->
+<!--[if lte IE 7]>
+    <div style="background-color:#DDECFF;margin:5px 0 5px 0;padding:3px 10px 3px 10px;border-color:#F6F6F6; border-style:solid;border-width:2px;">
+    <p>
+    <font size="2">
+    	<strong>您好</strong>，您目前使用的是舊版的<del>IE 7.0網路瀏覽器</del>，建議使用更快、更好用的瀏覽器！ 如：
+    	<big><u>Google瀏覽器</u> <font color="red">(推薦!)</font></big>、Firefox、Opera、Safari</a>。
+    </font>
+    </p>
+    </div>
+<![endif]-->
+<div id="fb-root"></div>
+
+
+<div class="main">
+	<h2>Starling-HandleSheet</h2>
+
+	<div id="flashContent" >
+	<p>　
+	      To view this page ensure that Adobe Flash Player version 
+	      11.0.0 or greater is installed. 
+	  </p>
+	  <script type="text/javascript"> 
+	      var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
+		  var getFPImgLink = "www.adobe.com/images/shared/download_buttons/get_flash_player.gif"
+		  var getURLLing = "http://www.adobe.com/go/getflashplayer"
+	      //document.write("<a href='"+getURLLing+"'><img src='"+ pageHost + getFPImgLink + "' alt='Get Adobe Flash player' /></a>" ); 
+		  document.write("<a href='"+getURLLing+"'>Get Adobe Flash player</a>" ); 
+	  </script>
+	</div>
+
+	<span>
+
+	</span>
+	<div>
+		<ul>
+		<li><a href="https://github.com/lamb-mei/HandleSheet" target="_balnk">GitHub</a></li>
+		<li><a href="http://lamb-mei.com/322/starling-handlesheet/" target="_balnk">Blog Link</a></li>
+		</ul>
+	</div>
+</div>
+
+</body>
+</html>
+
