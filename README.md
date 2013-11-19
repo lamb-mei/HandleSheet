@@ -7,7 +7,9 @@ Baseed on Starling 實現單手簡單操作物件位移 、旋轉和縮放
 ![screenshot](https://raw.github.com/lamb-mei/HandleSheet/master/docs/images/screenshot.png)
 
 
-## feature
+Demo (http://proj.lamb-mei.com/handlesheet/)
+
+## Feature
 
 What feature in HandleSheet:
 
