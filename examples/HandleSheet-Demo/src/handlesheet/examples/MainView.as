@@ -1,8 +1,8 @@
 package handlesheet.examples 
 {
 	
-	import lambmei.starling.display.HandleSheet;
-	import lambmei.starling.display.HandleSheetConfig;
+	import starling.extensions.handlesheet.HandleSheet;
+	import starling.extensions.handlesheet.HandleSheetConfig;
 	
 	import starling.display.DisplayObject;
 	import starling.display.Image;

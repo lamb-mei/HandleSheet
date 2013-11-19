@@ -1,4 +1,4 @@
-package lambmei.starling.display
+package starling.extensions.handlesheet
 {
 	import flash.geom.Point;
 	import flash.system.System;

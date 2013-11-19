@@ -1,4 +1,4 @@
-package lambmei.starling.display
+package starling.extensions.handlesheet
 {
 	import starling.display.DisplayObject;
 	import starling.textures.Texture;
