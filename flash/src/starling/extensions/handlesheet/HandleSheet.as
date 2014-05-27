@@ -67,6 +67,10 @@ package starling.extensions.handlesheet
 			if(value!=_selected){
 				_selected = value;
 				_selectedGroup.visible = _selected
+					
+				if(value){
+					renderItem(1, 0)
+				}
 			}
 		}
 		
@@ -162,7 +166,7 @@ package starling.extensions.handlesheet
 		}
 		
 		/**重新計算**/
-		protected function render(sizeDiff:Number , deltaAngle:Number):void
+		protected function renderItem(sizeDiff:Number , deltaAngle:Number):void
 		{
 			rotation += deltaAngle;
 			
@@ -346,7 +350,7 @@ package starling.extensions.handlesheet
 				}
 				selected = true
 					
-				render(1, 0)
+				
 				dispatchEventWith(EVENT_SELECTED , _dispatchEventBubbles)
 			}
 			
@@ -418,7 +422,7 @@ package starling.extensions.handlesheet
 //			scaleX *= sizeDiff;
 //			scaleY *= sizeDiff;
 			
-			render(sizeDiff , deltaAngle)
+			renderItem(sizeDiff , deltaAngle)
 			
 		}
 		
@@ -462,7 +466,7 @@ package starling.extensions.handlesheet
 //			scaleX *= sizeDiff;
 //			scaleY *= sizeDiff;
 			
-			render(sizeDiff , deltaAngle)
+			renderItem(sizeDiff , deltaAngle)
 		}
 		
 		
